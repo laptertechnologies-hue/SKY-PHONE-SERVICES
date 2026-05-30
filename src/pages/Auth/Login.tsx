@@ -33,10 +33,16 @@ const Login: React.FC = () => {
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
           <div style={{
             width: 56, height: 56, borderRadius: 14,
-            background: 'linear-gradient(135deg, #00c6fb, #0072ff)',
+            background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.75rem', marginBottom: '0.75rem',
-          }}>📱</div>
+            color: '#030712', marginBottom: '0.75rem',
+            boxShadow: '0 0 20px rgba(0, 242, 254, 0.2)',
+          }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+              <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="3" />
+            </svg>
+          </div>
           <h1 style={{ fontSize: '1.5rem' }}>Welcome Back</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Log in to Sky Phone Services</p>
         </div>

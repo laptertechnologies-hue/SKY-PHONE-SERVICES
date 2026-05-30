@@ -35,12 +35,17 @@ const Navbar: React.FC = () => {
           width: 36,
           height: 36,
           borderRadius: 8,
-          background: 'linear-gradient(135deg, #00c6fb, #0072ff)',
+          background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '1.2rem',
-        }}>📱</span>
+          color: '#030712',
+        }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+            <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="3" />
+          </svg>
+        </span>
         <span>Sky Phone Services</span>
       </Link>
 

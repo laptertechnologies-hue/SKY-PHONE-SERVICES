@@ -42,20 +42,15 @@ VITE_MAZPAY_AUTH_HEADER=your-base64-auth-header
 
 ## Database Setup (Supabase)
 
-Create a table `products` with these columns:
+We have provided a complete initialization script containing the database table schemas, Row-Level Security (RLS) policies, and pre-populated seed data:
 
-| Column      | Type    |
-|-------------|---------|
-| id          | uuid (primary key, auto) |
-| name        | text |
-| price       | numeric |
-| description | text |
-| image_url   | text |
-| category    | text |
-| brand       | text |
-| model       | text |
-| condition   | text |
-| stock       | integer |
+1. Log into your [Supabase Dashboard](https://supabase.com).
+2. Go to the **SQL Editor** from the left-hand menu.
+3. Click **New Query**.
+4. Open the [supabase-schema.sql](file:///C:/Users/LAPTER/.gemini/antigravity/scratch/sky-phone-ecommerce/supabase-schema.sql) file at the root of the project.
+5. Copy and paste the entire script into the query editor, then click **Run**.
+
+This script will set up the `products` and `orders` tables, enable Row Level Security, and seed the store with realistic phone spare parts categories and items ready for purchase.
 
 ## License
 MIT

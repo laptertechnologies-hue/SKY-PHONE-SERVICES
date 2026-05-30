@@ -1,0 +1,106 @@
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
+import { useCart } from '../context/CartContext';
+import type { User } from '@supabase/supabase-js';
+
+const Navbar: React.FC = () => {
+  const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+  const { state } = useCart();
+
+  const cartCount = state.items.reduce((s, i) => s + i.quantity, 0);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    navigate('/');
+  };
+
+  return (
+    <nav className="navbar">
+      <Link to="/" className="navbar-brand" onClick={() => setOpen(false)}>
+        <span style={{
+          width: 36,
+          height: 36,
+          borderRadius: 8,
+          background: 'linear-gradient(135deg, #00c6fb, #0072ff)',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '1.2rem',
+        }}>📱</span>
+        <span>Sky Phone Services</span>
+      </Link>
+
+      <button
+        className="navbar-toggle"
+        onClick={() => setOpen(o => !o)}
+        aria-label="Toggle navigation"
+      >
+        {open ? '✕' : '☰'}
+      </button>
+
+      <ul className={`navbar-links${open ? ' open' : ''}`}>
+        <li>
+          <Link to="/products" className="btn btn-outline" onClick={() => setOpen(false)}>
+            Shop
+          </Link>
+        </li>
+        <li>
+          <Link to="/cart" className="btn btn-outline" onClick={() => setOpen(false)}>
+            Cart {cartCount > 0 && (
+              <span style={{
+                background: '#00c6fb',
+                color: '#0a0e1a',
+                borderRadius: '50%',
+                width: 20,
+                height: 20,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+              }}>
+                {cartCount}
+              </span>
+            )}
+          </Link>
+        </li>
+        {user ? (
+          <li>
+            <button className="btn btn-primary" onClick={handleLogout}>
+              Logout
+            </button>
+          </li>
+        ) : (
+          <>
+            <li>
+              <Link to="/login" className="btn btn-outline" onClick={() => setOpen(false)}>
+                Login
+              </Link>
+            </li>
+            <li>
+              <Link to="/register" className="btn btn-primary" onClick={() => setOpen(false)}>
+                Register
+              </Link>
+            </li>
+          </>
+        )}
+      </ul>
+    </nav>
+  );
+};
+
+export default Navbar;

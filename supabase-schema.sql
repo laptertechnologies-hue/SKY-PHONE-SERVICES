@@ -1,7 +1,11 @@
 -- Supabase Database Schema & Seed Data for Sky Phone Services
 
+-- Drop existing tables to ensure clean recreation with all columns
+DROP TABLE IF EXISTS public.orders CASCADE;
+DROP TABLE IF EXISTS public.products CASCADE;
+
 -- 1. Create Products Table
-CREATE TABLE IF NOT EXISTS public.products (
+CREATE TABLE public.products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     price NUMERIC NOT NULL,
@@ -30,7 +34,7 @@ CREATE POLICY "Allow authenticated update access to products" ON public.products
 
 
 -- 2. Create Orders Table
-CREATE TABLE IF NOT EXISTS public.orders (
+CREATE TABLE public.orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     reference TEXT NOT NULL UNIQUE,
     user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,

@@ -1,5 +1,5 @@
-const API_KEY = import.meta.env.VITE_MAZPAY_API_KEY as string;
-const AUTH_HEADER = import.meta.env.VITE_MAZPAY_AUTH_HEADER as string;
+const API_KEY = (import.meta.env.VITE_MAZPAY_API_KEY as string) || 'marz_37HHmjOhLsg1GDf3';
+const AUTH_HEADER = (import.meta.env.VITE_MAZPAY_AUTH_HEADER as string) || 'bWFyel8zN0hIbWpPaExzZzFHRGYzOjFlOTV6UkRRUlRsdXJxbk4wcGxBc2dxVlQ5ZzFQNFhH';
 const BASE_URL = 'https://api.marzpay.com/v1';
 
 export interface PaymentResponse {

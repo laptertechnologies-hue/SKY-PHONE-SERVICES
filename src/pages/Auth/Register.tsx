@@ -27,28 +27,20 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="page page-enter" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '4rem' }}>
-      <div className="card" style={{ width: '100%', maxWidth: 420 }}>
+    <div className="page page-enter" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f1f1f2', minHeight: '100vh', paddingTop: '80px' }}>
+      <div className="card" style={{ width: '100%', maxWidth: 400, background: '#ffffff', border: '1px solid #eaeaea', boxShadow: 'none', borderRadius: '8px', padding: '1.5rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: 14,
-            background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            color: '#ffffff', marginBottom: '0.75rem',
-            boxShadow: '0 3px 10px var(--primary-glow)',
-          }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-              <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="3" />
-            </svg>
-          </div>
-          <h1 style={{ fontSize: '1.5rem', color: 'var(--text)' }}>Create Account</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join Sky Phones</p>
+          <Link to="/" style={{ textDecoration: 'none', color: '#f68b1e', display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+            <span>SKY PHONES</span>
+            <span style={{ fontSize: '1.2rem', color: '#f68b1e' }}>★</span>
+          </Link>
+          <h1 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#313137', marginTop: '0.25rem' }}>Create Account</h1>
+          <p style={{ color: '#75757a', fontSize: '0.85rem' }}>Join Sky Phones to purchase high quality phone parts</p>
         </div>
 
         <form onSubmit={handleRegister}>
           <div className="form-group">
-            <label htmlFor="reg-email">Email address</label>
+            <label htmlFor="reg-email" style={{ fontSize: '0.75rem' }}>Email address</label>
             <input
               id="reg-email"
               type="email"
@@ -59,7 +51,7 @@ const Register: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="reg-pass">Password</label>
+            <label htmlFor="reg-pass" style={{ fontSize: '0.75rem' }}>Password</label>
             <input
               id="reg-pass"
               type="password"
@@ -70,7 +62,7 @@ const Register: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="reg-confirm">Confirm Password</label>
+            <label htmlFor="reg-confirm" style={{ fontSize: '0.75rem' }}>Confirm Password</label>
             <input
               id="reg-confirm"
               type="password"
@@ -82,17 +74,17 @@ const Register: React.FC = () => {
           </div>
 
           {error && (
-            <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid var(--danger)', borderRadius: 8, padding: '0.65rem', color: 'var(--danger)', marginBottom: '1rem', fontSize: '0.875rem' }}>
+            <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid var(--danger)', borderRadius: '4px', padding: '0.65rem', color: 'var(--danger)', marginBottom: '1rem', fontSize: '0.85rem' }}>
               {error}
             </div>
           )}
 
-          <button type="submit" className="btn btn-primary w-full" disabled={loading} style={{ justifyContent: 'center', gap: '0.75rem' }}>
+          <button type="submit" className="btn btn-primary w-full" disabled={loading} style={{ justifyContent: 'center', gap: '0.75rem', padding: '0.75rem', borderRadius: '6px' }}>
             {loading ? <><div className="spinner" style={{ borderTopColor: '#fff' }} /> Creating account…</> : 'Create Account'}
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '1.25rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+        <p style={{ textAlign: 'center', marginTop: '1.25rem', color: '#75757a', fontSize: '0.85rem' }}>
           Already have an account?{' '}
           <Link to={`/login${redirect ? `?redirect=${redirect}` : ''}`} style={{ fontWeight: 600 }}>Login</Link>
         </p>

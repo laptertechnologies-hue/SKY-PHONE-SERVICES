@@ -48,7 +48,7 @@ const Checkout: React.FC = () => {
       // Initiate MazPay payment
       const payment = await initiatePayment(total, phone, reference);
 
-      // Poll/verify payment status (in production, use webhooks)
+      // Poll/verify payment status
       let attempts = 0;
       const poll = async () => {
         attempts++;
@@ -81,7 +81,7 @@ const Checkout: React.FC = () => {
 
   if (items.length === 0 && step !== 'success') {
     return (
-      <div className="page" style={{ textAlign: 'center', paddingTop: '6rem' }}>
+      <div className="page" style={{ textAlign: 'center', paddingTop: '8rem', background: '#f1f1f2', minHeight: '100vh' }}>
         <h2>Your cart is empty</h2>
         <button className="btn btn-primary mt-2" onClick={() => navigate('/')}>
           Shop Now
@@ -92,14 +92,14 @@ const Checkout: React.FC = () => {
 
   if (step === 'success') {
     return (
-      <div className="page page-enter" style={{ textAlign: 'center', paddingTop: '6rem' }}>
+      <div className="page page-enter" style={{ textAlign: 'center', paddingTop: '8rem', background: '#f1f1f2', minHeight: '100vh' }}>
         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>✅</div>
-        <h1 style={{ marginBottom: '0.5rem' }}>Order Placed!</h1>
-        <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+        <h1 style={{ marginBottom: '0.5rem', color: '#313137' }}>Order Placed!</h1>
+        <p style={{ color: '#75757a', marginBottom: '1.5rem', maxWidth: '500px', margin: '0 auto' }}>
           Thank you, {name}! Your payment was successful and your order is being processed.
           You will receive a confirmation shortly.
         </p>
-        <button className="btn btn-primary" onClick={() => navigate('/')}>
+        <button className="btn btn-primary" style={{ padding: '0.6rem 2rem' }} onClick={() => navigate('/')}>
           Back to Home
         </button>
       </div>
@@ -107,17 +107,17 @@ const Checkout: React.FC = () => {
   }
 
   return (
-    <div className="page page-enter">
-      <div className="container">
-        <h1 style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>Checkout</h1>
+    <div className="page page-enter" style={{ background: '#f1f1f2', minHeight: '100vh', paddingTop: '72px' }}>
+      <div className="container" style={{ padding: '0 0.75rem' }}>
+        <h1 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '1.25rem', color: '#313137' }}>Checkout</h1>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'start' }}>
+        <div className="grid-2" style={{ alignItems: 'start' }}>
           {/* Form */}
-          <form onSubmit={handlePay} className="card">
-            <h2 style={{ marginBottom: '1.25rem' }}>Delivery & Payment</h2>
+          <form onSubmit={handlePay} className="card" style={{ background: '#ffffff', border: '1px solid #eaeaea', boxShadow: 'none', borderRadius: '8px', padding: '1.25rem' }}>
+            <h2 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '1rem', color: '#313137' }}>Delivery & Payment</h2>
 
             <div className="form-group">
-              <label>Full Name</label>
+              <label style={{ fontSize: '0.75rem' }}>Full Name</label>
               <input
                 type="text"
                 required
@@ -128,7 +128,7 @@ const Checkout: React.FC = () => {
             </div>
 
             <div className="form-group">
-              <label>Delivery Address</label>
+              <label style={{ fontSize: '0.75rem' }}>Delivery Address</label>
               <input
                 type="text"
                 required
@@ -139,7 +139,7 @@ const Checkout: React.FC = () => {
             </div>
 
             <div className="form-group">
-              <label>Mobile Money Number (MTN / Airtel)</label>
+              <label style={{ fontSize: '0.75rem' }}>Mobile Money Number (MTN / Airtel)</label>
               <input
                 type="tel"
                 required
@@ -151,7 +151,7 @@ const Checkout: React.FC = () => {
             </div>
 
             {error && (
-              <div style={{ background: 'rgba(255,77,109,0.1)', border: '1px solid var(--danger)', borderRadius: 8, padding: '0.75rem', color: 'var(--danger)', marginBottom: '1rem', fontSize: '0.9rem' }}>
+              <div style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid var(--danger)', borderRadius: '4px', padding: '0.65rem', color: 'var(--danger)', marginBottom: '1rem', fontSize: '0.85rem' }}>
                 {error}
               </div>
             )}
@@ -160,36 +160,42 @@ const Checkout: React.FC = () => {
               type="submit"
               className="btn btn-primary w-full"
               disabled={loading}
-              style={{ justifyContent: 'center', gap: '0.75rem' }}
+              style={{ justifyContent: 'center', gap: '0.75rem', padding: '0.75rem', borderRadius: '6px' }}
             >
               {loading ? (
                 <>
                   <div className="spinner" />
-                  Processing…
+                  Processing payment…
                 </>
               ) : (
                 `Pay UGX ${total.toLocaleString()} with MazPay`
               )}
             </button>
 
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.75rem', textAlign: 'center' }}>
+            <p style={{ color: '#75757a', fontSize: '0.75rem', marginTop: '0.75rem', textAlign: 'center' }}>
               🔒 Secured by MazPay mobile-money payment gateway
             </p>
           </form>
 
           {/* Order Summary */}
-          <div className="card">
-            <h2 style={{ marginBottom: '1rem' }}>Order Summary</h2>
-            {items.map(item => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', gap: '1rem' }}>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontWeight: 600, fontSize: '0.9rem' }}>{item.name}</p>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>×{item.quantity}</p>
+          <div className="card" style={{ background: '#ffffff', border: '1px solid #eaeaea', boxShadow: 'none', borderRadius: '8px', padding: '1.25rem' }}>
+            <h2 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '1rem', color: '#313137' }}>Order Summary</h2>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
+              {items.map(item => (
+                <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontWeight: 600, fontSize: '0.85rem', color: '#313137' }}>{item.name}</p>
+                    <p style={{ color: '#75757a', fontSize: '0.8rem' }}>Quantity: {item.quantity}</p>
+                  </div>
+                  <p style={{ fontWeight: 700, fontSize: '0.85rem', color: '#000000', whiteSpace: 'nowrap' }}>
+                    UGX {(item.price * item.quantity).toLocaleString()}
+                  </p>
                 </div>
-                <p style={{ fontWeight: 700, whiteSpace: 'nowrap' }}>UGX {(item.price * item.quantity).toLocaleString()}</p>
-              </div>
-            ))}
-            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '1.05rem' }}>
+              ))}
+            </div>
+
+            <div style={{ borderTop: '1px solid #f1f1f2', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '1.05rem' }}>
               <span>Total</span>
               <span style={{ color: 'var(--primary)' }}>UGX {total.toLocaleString()}</span>
             </div>

@@ -6,6 +6,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect') || '';
+  const registered = searchParams.get('registered') === 'true';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -45,6 +46,12 @@ const Login: React.FC = () => {
           <h1 style={{ fontSize: '1.5rem', color: 'var(--text)' }}>Welcome Back</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Log in to Sky Phones</p>
         </div>
+
+        {registered && (
+          <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid var(--success)', borderRadius: 8, padding: '0.65rem', color: 'var(--success)', marginBottom: '1.25rem', fontSize: '0.875rem', textAlign: 'center', fontWeight: 500 }}>
+            Account created successfully! Please log in below.
+          </div>
+        )}
 
         <form onSubmit={handleLogin}>
           <div className="form-group">

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect') || '';
   const [email, setEmail] = useState('');
@@ -10,7 +11,6 @@ const Register: React.FC = () => {
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,19 +21,10 @@ const Register: React.FC = () => {
     const { error: err } = await supabase.auth.signUp({ email, password });
     setLoading(false);
     if (err) { setError(err.message); return; }
-    setSuccess(true);
+    
+    // Redirect immediately to login with success state
+    navigate(`/login?registered=true${redirect ? `&redirect=${redirect}` : ''}`);
   };
-
-  if (success) return (
-    <div className="page" style={{ textAlign: 'center', paddingTop: '6rem' }}>
-      <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📧</div>
-      <h2 style={{ color: 'var(--text)' }}>Check your email!</h2>
-      <p style={{ color: 'var(--text-muted)', maxWidth: 360, margin: '0.75rem auto 1.5rem' }}>
-        We sent a confirmation link to <strong>{email}</strong>. Click the link to activate your account.
-      </p>
-      <Link to={`/login${redirect ? `?redirect=${redirect}` : ''}`} className="btn btn-primary">Go to Login</Link>
-    </div>
-  );
 
   return (
     <div className="page page-enter" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '4rem' }}>

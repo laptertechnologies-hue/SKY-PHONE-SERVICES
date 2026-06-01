@@ -1,13 +1,17 @@
--- Supabase Database Schema & Seed Data for Sky Phone Services
+-- ==============================================================
+-- SKY PHONES - DATABASE INITIALIZATION & RESET SCRIPT
+-- ==============================================================
 
--- Drop existing tables to ensure clean recreation with all columns
+-- 1. CLEANUP: Drop existing triggers, functions, and tables
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
 DROP TABLE IF EXISTS public.orders CASCADE;
 DROP TABLE IF EXISTS public.products CASCADE;
 DROP TABLE IF EXISTS public.profiles CASCADE;
 
--- 1. Create Profiles Table (to manage user roles)
+-- 2. CREATE TABLES
+
+-- Profiles Table (handles user role details)
 CREATE TABLE public.profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     email TEXT NOT NULL,
@@ -15,31 +19,7 @@ CREATE TABLE public.profiles (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Enable RLS for Profiles
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow public read access to profiles" ON public.profiles
-    FOR SELECT TO public USING (true);
-
-CREATE POLICY "Allow users to update their own profile" ON public.profiles
-    FOR UPDATE TO public USING (auth.uid() = id);
-
--- Trigger to automatically create a profile on signup
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger AS $$
-BEGIN
-  INSERT INTO public.profiles (id, email, role)
-  VALUES (new.id, new.email, 'customer');
-  RETURN new;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE OR REPLACE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-
-
--- 2. Create Products Table
+-- Products Table (contains the spare parts catalog)
 CREATE TABLE public.products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
@@ -54,10 +34,36 @@ CREATE TABLE public.products (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Enable Row Level Security (RLS) for Products
-ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+-- Orders Table (contains purchase and payment statuses)
+CREATE TABLE public.orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    reference TEXT NOT NULL UNIQUE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    customer_name TEXT NOT NULL,
+    delivery_address TEXT NOT NULL,
+    phone_number TEXT NOT NULL,
+    items TEXT NOT NULL, -- Storing JSON-stringified items list
+    total NUMERIC NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    transaction_id TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
 
--- Products Policies: Allow public read access, but insert/update/delete only by admins
+-- 3. ENABLE ROW LEVEL SECURITY (RLS)
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+
+-- 4. CONFIGURE RLS POLICIES
+
+-- Profiles RLS Policies
+CREATE POLICY "Allow public read access to profiles" ON public.profiles
+    FOR SELECT TO public USING (true);
+
+CREATE POLICY "Allow users to update their own profile" ON public.profiles
+    FOR UPDATE TO public USING (auth.uid() = id);
+
+-- Products RLS Policies (everyone can read, only Admins can create/edit/delete)
 CREATE POLICY "Allow public read access to products" ON public.products
     FOR SELECT TO public USING (true);
 
@@ -85,26 +91,7 @@ CREATE POLICY "Allow admin to delete products" ON public.products
         )
     );
 
-
--- 3. Create Orders Table
-CREATE TABLE public.orders (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    reference TEXT NOT NULL UNIQUE,
-    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    customer_name TEXT NOT NULL,
-    delivery_address TEXT NOT NULL,
-    phone_number TEXT NOT NULL,
-    items TEXT NOT NULL, -- Storing JSON-stringified items as TEXT
-    total NUMERIC NOT NULL,
-    status TEXT NOT NULL DEFAULT 'pending',
-    transaction_id TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
--- Enable RLS for Orders
-ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
-
--- Orders Policies: Allow public (or anon) insert, select/update only by order owners or admins
+-- Orders RLS Policies (everyone can insert to support checkout, admins or owners can view/update)
 CREATE POLICY "Allow anyone to insert orders" ON public.orders
     FOR INSERT TO public WITH CHECK (true);
 
@@ -124,8 +111,21 @@ CREATE POLICY "Allow admins or owners to update orders" ON public.orders
         ) OR user_id = auth.uid()
     );
 
+-- 5. AUTOMATIC PROFILE GENERATION TRIGGER (For Auth Signups)
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, role)
+  VALUES (new.id, new.email, 'customer');
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 4. Insert Seed Products
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- 6. INSERT SEED CATALOG DATA (Jumia-style mock catalog)
 INSERT INTO public.products (name, price, description, image_url, category, brand, model, condition, stock) VALUES
 (
     'iPhone 13 Pro Max OLED Screen Replacement',
@@ -215,3 +215,9 @@ INSERT INTO public.products (name, price, description, image_url, category, bran
     'New',
     50
 );
+
+-- ==============================================================
+-- POST-INITIALIZATION ADMIN ASSIGNMENT INSTRUCTIONS:
+-- After registering an account on the website, run this statement:
+-- UPDATE public.profiles SET role = 'admin' WHERE email = 'your-email@example.com';
+-- ==============================================================

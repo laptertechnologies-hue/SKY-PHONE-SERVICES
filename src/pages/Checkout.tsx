@@ -83,7 +83,7 @@ const Checkout: React.FC = () => {
     return (
       <div className="page" style={{ textAlign: 'center', paddingTop: '6rem' }}>
         <h2>Your cart is empty</h2>
-        <button className="btn btn-primary mt-2" onClick={() => navigate('/products')}>
+        <button className="btn btn-primary mt-2" onClick={() => navigate('/')}>
           Shop Now
         </button>
       </div>
@@ -191,7 +191,7 @@ const Checkout: React.FC = () => {
             ))}
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '1.05rem' }}>
               <span>Total</span>
-              <span style={{ color: '#00c6fb' }}>UGX {total.toLocaleString()}</span>
+              <span style={{ color: 'var(--primary)' }}>UGX {total.toLocaleString()}</span>
             </div>
           </div>
         </div>

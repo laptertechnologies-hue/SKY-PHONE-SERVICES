@@ -39,26 +39,37 @@ const ProductDetail: React.FC = () => {
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product) return;
-    dispatch({
-      type: 'ADD',
-      payload: { id: product.id, name: product.name, price: product.price, image_url: product.image_url, quantity: qty },
-    });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert('Please log in or register to add parts to your cart.');
+        navigate('/login?redirect=cart');
+        return;
+      }
+      
+      dispatch({
+        type: 'ADD',
+        payload: { id: product.id, name: product.name, price: product.price, image_url: product.image_url, quantity: qty },
+      });
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    } catch (err) {
+      console.error('Error verifying auth:', err);
+    }
   };
 
   if (loading) return (
     <div style={{ textAlign: 'center', padding: '8rem', color: 'var(--text-muted)' }}>
-      <div className="spinner" style={{ margin: '0 auto', borderColor: 'rgba(0,198,251,0.3)', borderTopColor: '#00c6fb' }} />
+      <div className="spinner" style={{ margin: '0 auto', borderColor: 'rgba(246,139,30,0.1)', borderTopColor: 'var(--primary)' }} />
     </div>
   );
 
   if (!product) return (
     <div className="page" style={{ textAlign: 'center' }}>
       <h2>Product not found</h2>
-      <button className="btn btn-primary mt-2" onClick={() => navigate('/products')}>Back to Shop</button>
+      <button className="btn btn-primary mt-2" onClick={() => navigate('/')}>Back to Shop</button>
     </div>
   );
 
@@ -71,7 +82,7 @@ const ProductDetail: React.FC = () => {
           {/* Image */}
           <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
             <img
-              src={product.image_url || 'https://placehold.co/600x500/0a0e1a/00c6fb?text=No+Image'}
+              src={product.image_url || 'https://placehold.co/600x500/ffffff/f68b1e?text=No+Image'}
               alt={product.name}
               style={{ width: '100%', display: 'block', borderRadius: 12 }}
             />
@@ -85,11 +96,11 @@ const ProductDetail: React.FC = () => {
               {product.stock === 0 && <span className="badge badge-danger">Out of Stock</span>}
             </div>
 
-            <h1 style={{ fontSize: 'clamp(1.3rem, 3vw, 2rem)', marginBottom: '0.5rem' }}>{product.name}</h1>
+            <h1 style={{ fontSize: 'clamp(1.3rem, 3vw, 2rem)', marginBottom: '0.5rem', color: 'var(--text)' }}>{product.name}</h1>
             {product.brand && <p style={{ color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Brand: <strong>{product.brand}</strong></p>}
             {product.model && <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Model: <strong>{product.model}</strong></p>}
 
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#00c6fb', marginBottom: '1rem' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '1rem' }}>
               UGX {product.price.toLocaleString()}
             </div>
 
@@ -115,7 +126,7 @@ const ProductDetail: React.FC = () => {
                 >+</button>
               </div>
               <button
-                className="btn btn-primary"
+                className="btn className btn-primary"
                 style={{ flex: 1 }}
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}

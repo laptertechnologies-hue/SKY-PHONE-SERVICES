@@ -50,6 +50,14 @@ const Navbar: React.FC = () => {
     navigate('/');
   };
 
+  const handleCartClick = (e: React.MouseEvent) => {
+    setOpen(false);
+    if (!user) {
+      e.preventDefault();
+      navigate('/login?redirect=cart');
+    }
+  };
+
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-brand" onClick={() => setOpen(false)}>
@@ -61,14 +69,15 @@ const Navbar: React.FC = () => {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#030712',
+          color: '#ffffff',
+          boxShadow: '0 3px 8px var(--primary-glow)',
         }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
             <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="3" />
           </svg>
         </span>
-        <span>Sky Phone Services</span>
+        <span>Sky Phones</span>
       </Link>
 
       <button
@@ -81,16 +90,16 @@ const Navbar: React.FC = () => {
 
       <ul className={`navbar-links${open ? ' open' : ''}`}>
         <li>
-          <Link to="/products" className="btn btn-outline" onClick={() => setOpen(false)}>
+          <Link to="/" className="btn btn-outline" onClick={() => setOpen(false)}>
             Shop
           </Link>
         </li>
         <li>
-          <Link to="/cart" className="btn btn-outline" onClick={() => setOpen(false)}>
+          <Link to="/cart" className="btn btn-outline" onClick={handleCartClick}>
             Cart {cartCount > 0 && (
               <span style={{
-                background: '#00f2fe',
-                color: '#030712',
+                background: 'var(--primary)',
+                color: '#ffffff',
                 borderRadius: '50%',
                 width: 20,
                 height: 20,
@@ -99,6 +108,7 @@ const Navbar: React.FC = () => {
                 justifyContent: 'center',
                 fontSize: '0.75rem',
                 fontWeight: 700,
+                marginLeft: '0.25rem',
               }}>
                 {cartCount}
               </span>

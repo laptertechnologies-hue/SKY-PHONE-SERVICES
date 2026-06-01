@@ -12,11 +12,11 @@ const Cart: React.FC = () => {
     return (
       <div className="page" style={{ textAlign: 'center', paddingTop: '6rem' }}>
         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🛒</div>
-        <h2 style={{ marginBottom: '0.5rem' }}>Your cart is empty</h2>
+        <h2 style={{ marginBottom: '0.5rem', color: 'var(--text)' }}>Your cart is empty</h2>
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
           Browse our catalogue to find spare parts you need.
         </p>
-        <Link to="/products" className="btn btn-primary">Shop Now</Link>
+        <Link to="/" className="btn btn-primary">Shop Now</Link>
       </div>
     );
   }
@@ -24,7 +24,7 @@ const Cart: React.FC = () => {
   return (
     <div className="page page-enter">
       <div className="container">
-        <h1 style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>Shopping Cart</h1>
+        <h1 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', color: 'var(--text)' }}>Shopping Cart</h1>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem', marginBottom: '2rem' }}>
           {items.map(item => (
@@ -36,13 +36,13 @@ const Cart: React.FC = () => {
               flexWrap: 'wrap',
             }}>
               <img
-                src={item.image_url || 'https://placehold.co/80x80/0a0e1a/00c6fb?text=?'}
+                src={item.image_url || 'https://placehold.co/80x80/ffffff/f68b1e?text=?'}
                 alt={item.name}
-                style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}
+                style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8, flexShrink: 0, border: '1px solid var(--border)' }}
               />
               <div style={{ flex: 1, minWidth: 120 }}>
-                <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>{item.name}</h3>
-                <p style={{ color: '#00c6fb', fontWeight: 700 }}>UGX {item.price.toLocaleString()}</p>
+                <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem', color: 'var(--text)' }}>{item.name}</h3>
+                <p style={{ color: 'var(--primary)', fontWeight: 700 }}>UGX {item.price.toLocaleString()}</p>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <button
@@ -50,14 +50,14 @@ const Cart: React.FC = () => {
                   style={{ padding: '0.3rem 0.65rem' }}
                   onClick={() => dispatch({ type: 'UPDATE_QTY', payload: { id: item.id, quantity: item.quantity - 1 } })}
                 >−</button>
-                <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 700 }}>{item.quantity}</span>
+                <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 700, color: 'var(--text)' }}>{item.quantity}</span>
                 <button
                   className="btn btn-outline"
                   style={{ padding: '0.3rem 0.65rem' }}
                   onClick={() => dispatch({ type: 'UPDATE_QTY', payload: { id: item.id, quantity: item.quantity + 1 } })}
                 >+</button>
               </div>
-              <p style={{ fontWeight: 700, minWidth: 100, textAlign: 'right' }}>
+              <p style={{ fontWeight: 700, minWidth: 100, textAlign: 'right', color: 'var(--text)' }}>
                 UGX {(item.price * item.quantity).toLocaleString()}
               </p>
               <button
@@ -73,7 +73,7 @@ const Cart: React.FC = () => {
 
         {/* Summary */}
         <div className="card" style={{ maxWidth: 400, marginLeft: 'auto' }}>
-          <h2 style={{ marginBottom: '1rem' }}>Order Summary</h2>
+          <h2 style={{ marginBottom: '1rem', color: 'var(--text)' }}>Order Summary</h2>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>
             <span>Subtotal ({items.reduce((s, i) => s + i.quantity, 0)} items)</span>
             <span>UGX {total.toLocaleString()}</span>
@@ -84,12 +84,12 @@ const Cart: React.FC = () => {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '1.1rem', marginBottom: '1.25rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
             <span>Total</span>
-            <span style={{ color: '#00c6fb' }}>UGX {total.toLocaleString()}</span>
+            <span style={{ color: 'var(--primary)' }}>UGX {total.toLocaleString()}</span>
           </div>
           <button className="btn btn-primary w-full" onClick={() => navigate('/checkout')}>
             Proceed to Checkout
           </button>
-          <Link to="/products" className="btn btn-outline w-full mt-1" style={{ justifyContent: 'center' }}>
+          <Link to="/" className="btn btn-outline w-full mt-1" style={{ justifyContent: 'center' }}>
             Continue Shopping
           </Link>
         </div>

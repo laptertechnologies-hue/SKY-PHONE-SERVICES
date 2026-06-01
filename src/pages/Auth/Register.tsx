@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 
 const Register: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get('redirect') || '';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -25,11 +27,11 @@ const Register: React.FC = () => {
   if (success) return (
     <div className="page" style={{ textAlign: 'center', paddingTop: '6rem' }}>
       <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📧</div>
-      <h2>Check your email!</h2>
+      <h2 style={{ color: 'var(--text)' }}>Check your email!</h2>
       <p style={{ color: 'var(--text-muted)', maxWidth: 360, margin: '0.75rem auto 1.5rem' }}>
         We sent a confirmation link to <strong>{email}</strong>. Click the link to activate your account.
       </p>
-      <Link to="/login" className="btn btn-primary">Go to Login</Link>
+      <Link to={`/login${redirect ? `?redirect=${redirect}` : ''}`} className="btn btn-primary">Go to Login</Link>
     </div>
   );
 
@@ -41,16 +43,16 @@ const Register: React.FC = () => {
             width: 56, height: 56, borderRadius: 14,
             background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            color: '#030712', marginBottom: '0.75rem',
-            boxShadow: '0 0 20px rgba(0, 242, 254, 0.2)',
+            color: '#ffffff', marginBottom: '0.75rem',
+            boxShadow: '0 3px 10px var(--primary-glow)',
           }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
               <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="3" />
             </svg>
           </div>
-          <h1 style={{ fontSize: '1.5rem' }}>Create Account</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join Sky Phone Services</p>
+          <h1 style={{ fontSize: '1.5rem', color: 'var(--text)' }}>Create Account</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join Sky Phones</p>
         </div>
 
         <form onSubmit={handleRegister}>
@@ -89,19 +91,19 @@ const Register: React.FC = () => {
           </div>
 
           {error && (
-            <div style={{ background: 'rgba(255,77,109,0.1)', border: '1px solid var(--danger)', borderRadius: 8, padding: '0.65rem', color: 'var(--danger)', marginBottom: '1rem', fontSize: '0.875rem' }}>
+            <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid var(--danger)', borderRadius: 8, padding: '0.65rem', color: 'var(--danger)', marginBottom: '1rem', fontSize: '0.875rem' }}>
               {error}
             </div>
           )}
 
           <button type="submit" className="btn btn-primary w-full" disabled={loading} style={{ justifyContent: 'center', gap: '0.75rem' }}>
-            {loading ? <><div className="spinner" /> Creating account…</> : 'Create Account'}
+            {loading ? <><div className="spinner" style={{ borderTopColor: '#fff' }} /> Creating account…</> : 'Create Account'}
           </button>
         </form>
 
         <p style={{ textAlign: 'center', marginTop: '1.25rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
           Already have an account?{' '}
-          <Link to="/login" style={{ fontWeight: 600 }}>Login</Link>
+          <Link to={`/login${redirect ? `?redirect=${redirect}` : ''}`} style={{ fontWeight: 600 }}>Login</Link>
         </p>
       </div>
     </div>

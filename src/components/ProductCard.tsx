@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { supabase } from '../lib/supabaseClient';
 
 interface Props {
   id: string;
@@ -13,13 +14,25 @@ interface Props {
 
 const ProductCard: React.FC<Props> = ({ id, name, price, image_url, category, condition }) => {
   const { dispatch } = useCart();
+  const navigate = useNavigate();
 
-  const addToCart = (e: React.MouseEvent) => {
+  const addToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch({
-      type: 'ADD',
-      payload: { id, name, price, image_url, quantity: 1 },
-    });
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert('Please log in or register to add parts to your cart.');
+        navigate('/login?redirect=cart');
+        return;
+      }
+      
+      dispatch({
+        type: 'ADD',
+        payload: { id, name, price, image_url, quantity: 1 },
+      });
+    } catch (err) {
+      console.error('Error verifying auth:', err);
+    }
   };
 
   return (
@@ -31,10 +44,11 @@ const ProductCard: React.FC<Props> = ({ id, name, price, image_url, category, co
           position: 'relative',
           borderRadius: 8,
           overflow: 'hidden',
-          background: 'rgba(255,255,255,0.05)',
+          background: '#f8fafc',
+          border: '1px solid var(--border)',
         }}>
           <img
-            src={image_url || 'https://placehold.co/300x200/0a0e1a/00c6fb?text=No+Image'}
+            src={image_url || 'https://placehold.co/300x200/ffffff/f68b1e?text=No+Image'}
             alt={name}
             style={{
               position: 'absolute',
@@ -57,7 +71,7 @@ const ProductCard: React.FC<Props> = ({ id, name, price, image_url, category, co
           <h3 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.25rem' }}>{name}</h3>
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.25rem' }}>
-          <span style={{ fontWeight: 700, color: '#00c6fb', fontSize: '1rem' }}>
+          <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1rem' }}>
             UGX {price.toLocaleString()}
           </span>
           {condition && (

@@ -9,6 +9,8 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
+import Admin from './pages/Admin';
+import UserDashboard from './pages/UserDashboard';
 
 const App: React.FC = () => {
   return (
@@ -23,6 +25,8 @@ const App: React.FC = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </CartProvider>

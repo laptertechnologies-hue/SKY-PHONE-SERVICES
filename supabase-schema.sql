@@ -1,10 +1,45 @@
 -- Supabase Database Schema & Seed Data for Sky Phone Services
 
 -- Drop existing tables to ensure clean recreation with all columns
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
 DROP TABLE IF EXISTS public.orders CASCADE;
 DROP TABLE IF EXISTS public.products CASCADE;
+DROP TABLE IF EXISTS public.profiles CASCADE;
 
--- 1. Create Products Table
+-- 1. Create Profiles Table (to manage user roles)
+CREATE TABLE public.profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    email TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'customer' CHECK (role IN ('customer', 'admin')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable RLS for Profiles
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access to profiles" ON public.profiles
+    FOR SELECT TO public USING (true);
+
+CREATE POLICY "Allow users to update their own profile" ON public.profiles
+    FOR UPDATE TO public USING (auth.uid() = id);
+
+-- Trigger to automatically create a profile on signup
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, role)
+  VALUES (new.id, new.email, 'customer');
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+
+-- 2. Create Products Table
 CREATE TABLE public.products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
@@ -22,18 +57,36 @@ CREATE TABLE public.products (
 -- Enable Row Level Security (RLS) for Products
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 
--- Products Policies: Allow public read access, but insert/update only by authenticated users (or service role)
+-- Products Policies: Allow public read access, but insert/update/delete only by admins
 CREATE POLICY "Allow public read access to products" ON public.products
     FOR SELECT TO public USING (true);
 
-CREATE POLICY "Allow authenticated insert access to products" ON public.products
-    FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Allow admin to insert products" ON public.products
+    FOR INSERT TO authenticated WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM public.profiles
+            WHERE id = auth.uid() AND role = 'admin'
+        )
+    );
 
-CREATE POLICY "Allow authenticated update access to products" ON public.products
-    FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "Allow admin to update products" ON public.products
+    FOR UPDATE TO authenticated USING (
+        EXISTS (
+            SELECT 1 FROM public.profiles
+            WHERE id = auth.uid() AND role = 'admin'
+        )
+    );
+
+CREATE POLICY "Allow admin to delete products" ON public.products
+    FOR DELETE TO authenticated USING (
+        EXISTS (
+            SELECT 1 FROM public.profiles
+            WHERE id = auth.uid() AND role = 'admin'
+        )
+    );
 
 
--- 2. Create Orders Table
+-- 3. Create Orders Table
 CREATE TABLE public.orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     reference TEXT NOT NULL UNIQUE,
@@ -51,18 +104,28 @@ CREATE TABLE public.orders (
 -- Enable RLS for Orders
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 
--- Orders Policies: Allow public (or anon) insert (so guest checkouts can work), select only by order owner or authenticated user
+-- Orders Policies: Allow public (or anon) insert, select/update only by order owners or admins
 CREATE POLICY "Allow anyone to insert orders" ON public.orders
     FOR INSERT TO public WITH CHECK (true);
 
-CREATE POLICY "Allow users to view their own orders" ON public.orders
-    FOR SELECT TO public USING (true); -- Can be refined based on user_id or reference in production
+CREATE POLICY "Allow admins or owners to view orders" ON public.orders
+    FOR SELECT TO public USING (
+        EXISTS (
+            SELECT 1 FROM public.profiles
+            WHERE id = auth.uid() AND role = 'admin'
+        ) OR user_id = auth.uid()
+    );
 
-CREATE POLICY "Allow update of orders status" ON public.orders
-    FOR UPDATE TO public USING (true);
+CREATE POLICY "Allow admins or owners to update orders" ON public.orders
+    FOR UPDATE TO public USING (
+        EXISTS (
+            SELECT 1 FROM public.profiles
+            WHERE id = auth.uid() AND role = 'admin'
+        ) OR user_id = auth.uid()
+    );
 
 
--- 3. Insert Seed Products
+-- 4. Insert Seed Products
 INSERT INTO public.products (name, price, description, image_url, category, brand, model, condition, stock) VALUES
 (
     'iPhone 13 Pro Max OLED Screen Replacement',

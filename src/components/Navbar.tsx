@@ -7,24 +7,46 @@ import type { User } from '@supabase/supabase-js';
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const navigate = useNavigate();
   const { state } = useCart();
 
   const cartCount = state.items.reduce((s, i) => s + i.quantity, 0);
 
   useEffect(() => {
+    const fetchRole = async (userId: string) => {
+      try {
+        const { data } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', userId)
+          .single();
+        setRole(data?.role ?? 'customer');
+      } catch (err) {
+        console.error('Error fetching role:', err);
+        setRole('customer');
+      }
+    };
+
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user);
+      if (data.user) fetchRole(data.user.id);
+      else setRole(null);
     });
+
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) fetchRole(session.user.id);
+      else setRole(null);
     });
+
     return () => listener.subscription.unsubscribe();
   }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    setRole(null);
     navigate('/');
   };
 
@@ -67,8 +89,8 @@ const Navbar: React.FC = () => {
           <Link to="/cart" className="btn btn-outline" onClick={() => setOpen(false)}>
             Cart {cartCount > 0 && (
               <span style={{
-                background: '#00c6fb',
-                color: '#0a0e1a',
+                background: '#00f2fe',
+                color: '#030712',
                 borderRadius: '50%',
                 width: 20,
                 height: 20,
@@ -84,11 +106,26 @@ const Navbar: React.FC = () => {
           </Link>
         </li>
         {user ? (
-          <li>
-            <button className="btn btn-primary" onClick={handleLogout}>
-              Logout
-            </button>
-          </li>
+          <>
+            {role === 'admin' ? (
+              <li>
+                <Link to="/admin" className="btn btn-outline" onClick={() => setOpen(false)}>
+                  Admin
+                </Link>
+              </li>
+            ) : (
+              <li>
+                <Link to="/dashboard" className="btn btn-outline" onClick={() => setOpen(false)}>
+                  Dashboard
+                </Link>
+              </li>
+            )}
+            <li>
+              <button className="btn btn-primary" onClick={handleLogout}>
+                Logout
+              </button>
+            </li>
+          </>
         ) : (
           <>
             <li>

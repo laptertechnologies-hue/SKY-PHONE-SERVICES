@@ -255,7 +255,7 @@ const Admin: React.FC = () => {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <h1 style={{ fontSize: '2rem', color: '#fff' }}>Admin Dashboard</h1>
+            <h1 style={{ fontSize: '2rem', color: 'var(--text)' }}>Admin Dashboard</h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Manage store orders, parts inventory, and operations.</p>
           </div>
           <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -274,7 +274,7 @@ const Admin: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
           {[
             { label: 'Total Revenue', value: `UGX ${totalSales.toLocaleString()}`, color: 'var(--primary)' },
-            { label: 'Total Orders', value: orders.length.toString(), color: '#fff' },
+            { label: 'Total Orders', value: orders.length.toString(), color: 'var(--text)' },
             { label: 'Pending Orders', value: pendingOrders.toString(), color: 'var(--danger)' },
             { label: 'Active Customers', value: totalCustomers.toString(), color: 'var(--success)' },
           ].map(stat => (
@@ -355,8 +355,8 @@ const Admin: React.FC = () => {
                           value={order.status}
                           onChange={e => handleUpdateOrderStatus(order.id, e.target.value)}
                           style={{
-                            background: 'rgba(255,255,255,0.05)',
-                            color: '#fff',
+                            background: '#ffffff',
+                            color: 'var(--text)',
                             border: '1px solid var(--border)',
                             padding: '0.25rem 0.5rem',
                             borderRadius: '6px',
@@ -382,7 +382,7 @@ const Admin: React.FC = () => {
                             <span>UGX {(item.price * item.quantity).toLocaleString()}</span>
                           </div>
                         ))}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, marginTop: '0.5rem', fontSize: '1rem', color: '#00f2fe' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, marginTop: '0.5rem', fontSize: '1rem', color: 'var(--primary)' }}>
                           <span>Total Amount</span>
                           <span>UGX {order.total.toLocaleString()}</span>
                         </div>
@@ -420,7 +420,7 @@ const Admin: React.FC = () => {
                   </div>
                   <div style={{ flex: 1 }}>
                     <span className="badge badge-primary" style={{ marginBottom: '0.4rem', display: 'inline-block' }}>{p.category}</span>
-                    <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#fff', marginBottom: '0.25rem' }}>{p.name}</h3>
+                    <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text)', marginBottom: '0.25rem' }}>{p.name}</h3>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
                       <span style={{ fontWeight: 700, color: 'var(--primary)' }}>UGX {p.price.toLocaleString()}</span>
                       <span className={`badge ${p.stock > 0 ? 'badge-success' : 'badge-danger'}`}>Stock: {p.stock}</span>
@@ -456,7 +456,7 @@ const Admin: React.FC = () => {
           }}>
             <form onSubmit={handleFormSubmit} className="card page-enter" style={{ width: '100%', maxWidth: 500, display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem' }}>
-                <h2 style={{ fontSize: '1.25rem', color: '#fff' }}>{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
+                <h2 style={{ fontSize: '1.25rem', color: 'var(--text)' }}>{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
                 <button
                   type="button"
                   style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}

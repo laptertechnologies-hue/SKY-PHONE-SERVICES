@@ -67,30 +67,30 @@ const UserDashboard: React.FC = () => {
             width: 72, height: 72, borderRadius: '50%',
             background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '2rem', color: '#030712', fontWeight: 800,
+            fontSize: '2rem', color: '#ffffff', fontWeight: 800,
           }}>
             {user?.email?.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h1 style={{ fontSize: '1.5rem', color: '#fff' }}>My Dashboard</h1>
+            <h1 style={{ fontSize: '1.5rem', color: 'var(--text)' }}>My Dashboard</h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Logged in as: <strong>{user?.email}</strong></p>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Account Created: {new Date(user?.created_at).toLocaleDateString()}</p>
           </div>
         </div>
 
         {/* Order History */}
-        <h2 style={{ marginBottom: '1.5rem', fontSize: '1.4rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>
+        <h2 style={{ marginBottom: '1.5rem', fontSize: '1.4rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', color: 'var(--text)' }}>
           My Order History ({orders.length})
         </h2>
 
         {orders.length === 0 ? (
           <div className="card text-center" style={{ padding: '3.5rem' }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📦</div>
-            <h3 style={{ marginBottom: '0.5rem' }}>No orders placed yet</h3>
+            <h3 style={{ marginBottom: '0.5rem', color: 'var(--text)' }}>No orders placed yet</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
               You haven't ordered any phone spare parts yet. Explore our catalog!
             </p>
-            <Link to="/products" className="btn btn-primary">
+            <Link to="/" className="btn btn-primary">
               Browse Spare Parts
             </Link>
           </div>
@@ -117,20 +117,20 @@ const UserDashboard: React.FC = () => {
                     <div>
                       {orderItems.map((item: any) => (
                         <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.4rem', borderBottom: '1px dashed var(--border)', paddingBottom: '0.25rem' }}>
-                          <span>{item.name} <strong style={{ color: 'var(--text-muted)' }}>×{item.quantity}</strong></span>
-                          <span>UGX {(item.price * item.quantity).toLocaleString()}</span>
+                          <span style={{ color: 'var(--text)' }}>{item.name} <strong style={{ color: 'var(--text-muted)' }}>×{item.quantity}</strong></span>
+                          <span style={{ color: 'var(--text)' }}>UGX {(item.price * item.quantity).toLocaleString()}</span>
                         </div>
                       ))}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, marginTop: '0.5rem', fontSize: '1rem', color: '#00f2fe' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, marginTop: '0.5rem', fontSize: '1rem', color: 'var(--primary)' }}>
                         <span>Total Paid</span>
                         <span>UGX {order.total.toLocaleString()}</span>
                       </div>
                     </div>
 
                     <div style={{ borderLeft: '1px solid var(--border)', paddingLeft: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                      <p style={{ marginBottom: '0.2rem' }}>Deliver to: <strong style={{ color: '#fff' }}>{order.customer_name}</strong></p>
-                      <p style={{ marginBottom: '0.2rem' }}>Number: <strong style={{ color: '#fff' }}>{order.phone_number}</strong></p>
-                      <p style={{ marginBottom: '0.2rem' }}>Address: <strong style={{ color: '#fff' }}>{order.delivery_address}</strong></p>
+                      <p style={{ marginBottom: '0.2rem' }}>Deliver to: <strong style={{ color: 'var(--text)' }}>{order.customer_name}</strong></p>
+                      <p style={{ marginBottom: '0.2rem' }}>Number: <strong style={{ color: 'var(--text)' }}>{order.phone_number}</strong></p>
+                      <p style={{ marginBottom: '0.2rem' }}>Address: <strong style={{ color: 'var(--text)' }}>{order.delivery_address}</strong></p>
                       {order.transaction_id && <p style={{ fontSize: '0.8rem', color: 'var(--success)', marginTop: '0.4rem' }}>Payment Txn: {order.transaction_id}</p>}
                     </div>
                   </div>

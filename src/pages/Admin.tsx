@@ -440,16 +440,32 @@ const Admin: React.FC = () => {
                         </div>
                       </div>
 
-                      <div style={{ borderLeft: '1px solid var(--border)', paddingLeft: '1.5rem', fontSize: '0.9rem' }}>
-                        <h4 style={{ fontSize: '0.95rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Customer Details:</h4>
-                        <p style={{ marginBottom: '0.25rem' }}>Name: <strong>{order.customer_name}</strong></p>
-                        <p style={{ marginBottom: '0.25rem' }}>Phone: <strong>{order.phone_number}</strong></p>
-                        <p style={{ marginBottom: '0.25rem' }}>Address: <strong>{order.delivery_address}</strong></p>
-                        {order.transaction_id && (
-                          <p style={{ fontSize: '0.8rem', color: 'var(--success)', marginTop: '0.5rem' }}>
-                            Txn ID: {order.transaction_id}
-                          </p>
-                        )}
+                      <div style={{ borderLeft: '1px solid var(--border)', paddingLeft: '1.5rem', fontSize: '0.85rem' }}>
+                        <h4 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase', fontWeight: 700 }}>
+                          Customer Details
+                        </h4>
+                        <p style={{ marginBottom: '0.25rem' }}>Name: <strong style={{ color: 'var(--text)' }}>{order.customer_name}</strong></p>
+                        <p style={{ marginBottom: '0.25rem' }}>Phone: <strong style={{ color: 'var(--text)' }}>{order.phone_number}</strong></p>
+                        <p style={{ marginBottom: '0.4rem' }}>Address: <strong style={{ color: 'var(--text)' }}>{order.delivery_address}</strong></p>
+                        
+                        <h4 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.75rem', marginBottom: '0.4rem', textTransform: 'uppercase', fontWeight: 700 }}>
+                          Payment Info
+                        </h4>
+                        <p style={{ marginBottom: '0.25rem' }}>
+                          Payment Status:{' '}
+                          <span style={{ 
+                            fontWeight: 700, 
+                            color: order.status === 'paid' ? '#10b981' : order.status === 'cancelled' ? '#ef4444' : '#f68b1e'
+                          }}>
+                            {order.status === 'paid' ? '✓ Paid' : order.status === 'cancelled' ? '✗ Cancelled / Failed' : '⌛ Pending Payment'}
+                          </span>
+                        </p>
+                        <p style={{ marginBottom: '0.25rem' }}>
+                          Transaction ID:{' '}
+                          <code style={{ fontSize: '0.75rem', background: '#f1f1f2', padding: '2px 4px', borderRadius: '4px', wordBreak: 'break-all' }}>
+                            {order.transaction_id || 'None (Cash/Pending)'}
+                          </code>
+                        </p>
                       </div>
                     </div>
                   </div>

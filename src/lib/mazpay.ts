@@ -1,5 +1,5 @@
 const AUTH_HEADER = 'bWFyel8zN0hIbWpPaExzZzFHRGYzOjFlOTV6UkRRUlRsdXJxbk4wcGxBc2dxVlQ5ZzFQNFhH';
-const BASE_URL = 'https://wallet.wearemarz.com/api/v1';
+const BASE_URL = '/api-proxy';
 
 export interface PaymentResponse {
   status: string;

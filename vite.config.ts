@@ -6,6 +6,13 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
+    proxy: {
+      '/api-proxy': {
+        target: 'https://wallet.wearemarz.com/api/v1',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-proxy/, ''),
+      },
+    },
   },
   build: {
     outDir: 'dist',

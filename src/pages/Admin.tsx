@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { verifyPayment } from '../lib/mazpay';
 
 interface Order {
   id: string;
@@ -212,6 +213,35 @@ const Admin: React.FC = () => {
     }
   };
 
+  // Verify payment status with Marz Wallet
+  const handleVerifyPayment = async (orderId: string, txnUuid: string) => {
+    try {
+      const response = await verifyPayment(txnUuid);
+      const marzStatus = response.data?.transaction?.status;
+      
+      alert(`Marz Wallet Status for this collection: "${marzStatus}"`);
+
+      let updatedStatus = '';
+      if (marzStatus === 'successful' || marzStatus === 'completed' || marzStatus === 'sandbox') {
+        updatedStatus = 'paid';
+      } else if (marzStatus === 'failed' || marzStatus === 'cancelled') {
+        updatedStatus = 'cancelled';
+      }
+
+      if (updatedStatus) {
+        const { error } = await supabase
+          .from('orders')
+          .update({ status: updatedStatus })
+          .eq('id', orderId);
+        if (error) throw error;
+
+        setOrders(orders.map(o => (o.id === orderId ? { ...o, status: updatedStatus } : o)));
+      }
+    } catch (err: any) {
+      alert(`Verification failed: ${err.message || 'Unknown network error.'}`);
+    }
+  };
+
   if (authLoading) {
     return (
       <div style={{ textAlign: 'center', padding: '10rem', color: 'var(--text-muted)' }}>
@@ -345,7 +375,28 @@ const Admin: React.FC = () => {
                           {new Date(order.created_at).toLocaleString()}
                         </span>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                        {order.transaction_id && (order.status === 'pending' || order.status === 'processing') && (
+                          <button
+                            className="btn btn-outline"
+                            type="button"
+                            style={{
+                              padding: '0.25rem 0.5rem',
+                              fontSize: '0.75rem',
+                              borderRadius: '4px',
+                              background: '#feefde',
+                              color: '#f68b1e',
+                              borderColor: '#f68b1e',
+                              height: '28px',
+                              lineHeight: '1',
+                              fontWeight: 700,
+                            }}
+                            onClick={() => handleVerifyPayment(order.id, order.transaction_id!)}
+                          >
+                            🔍 Verify Payment
+                          </button>
+                        )}
+                        
                         <span className={`badge ${
                           order.status === 'paid' || order.status === 'delivered' ? 'badge-success' :
                           order.status === 'pending' ? 'badge-danger' : 'badge-primary'
@@ -362,6 +413,7 @@ const Admin: React.FC = () => {
                             borderRadius: '6px',
                             fontSize: '0.85rem',
                             outline: 'none',
+                            height: '28px',
                           }}
                         >
                           <option value="pending">Pending</option>
